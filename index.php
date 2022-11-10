@@ -1,11 +1,14 @@
 <?php
 
-include_once('./module/main/Application.php');
-include_once('./Components/menu/class.php');
+/**
+ * @var ?Application $APPLICATION
+ */
 
-use Main\Application;
-use Main\Component\Menu;
 
-require('header.php');
+require_once ('./header.php');
 
-Menu::getCurrentMenu();
+$menu = $APPLICATION::getHeader();
+dump($menu);
+?>
+<a href="/Problems">Problems</a>
+
