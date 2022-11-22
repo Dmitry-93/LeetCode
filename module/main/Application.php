@@ -17,6 +17,8 @@ class Application
     private static array $systemFilesAndDir = [
         './module',
         './vendor',
+        './.git',
+        './.idea',
     ];
 
     /**
@@ -33,20 +35,20 @@ class Application
 
     public static function getMenuStructure(bool $showSystemFilesOrDir = false): array
     {
-        $menu[] = self::recursive('/', $showSystemFilesOrDir);
+        $menu[] = self::recursive('./', $showSystemFilesOrDir);
         return $menu;
     }
 
-    private static function recursive(string $path, bool $showSystemFilesOrDir): array
+    protected static function recursive(string $path, bool $showSystemFilesOrDir): array
     {
-        $scanFiles = scandir('.' . $path);
+        $scanFiles = scandir($path);
         $menu = [];
         foreach ($scanFiles as $fileName) {
             $filePath = $path . $fileName;
-            if (str_contains($fileName, '.') || (!$showSystemFilesOrDir && self::isSystemFilesOrDir('.' . $filePath))) {
+            if ((!is_dir($filePath) || $fileName == '.' || $fileName == '..') || (!$showSystemFilesOrDir && self::isSystemFilesOrDir($filePath))) {
                 continue;
             }
-            $menu[$fileName] = self::recursive($filePath, $showSystemFilesOrDir);
+            $menu[$fileName] = self::recursive($filePath . '/', $showSystemFilesOrDir);
         }
         return $menu;
     }
@@ -58,7 +60,7 @@ class Application
      */
     public static function isSystemFilesOrDir(string $path): bool
     {
-        return in_array('.' . $path, self::$systemFilesAndDir, true);
+        return in_array($path, self::$systemFilesAndDir, true);
     }
 
 }
